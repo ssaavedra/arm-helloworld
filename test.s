@@ -3,6 +3,8 @@
 	.text
 	.global	print_uart0
 print_uart0:
+	@ This routine allows us to print onto UART0DR
+	@ We use r0 as the mem. address for our char*
 	ldrb	r3, [r0, #0]	@ zero_extendqisi2
 	cmp	r3, #0
 	bxeq	lr
@@ -16,6 +18,7 @@ print_uart0_loop:
 	bx	lr
 
 	.global	c_entry
+	@ This is our entry point from startup.s
 c_entry:
 	ldr	r0, =HELLO_WORLD
 	bl	print_uart0
@@ -24,7 +27,8 @@ c_entry:
 	.section	.rodata
 	.global	UART0DR
 UART0DR:
-	.word	270471168
+	.word	0x101F1000 @ This is the UART0 address on a versatileboard
 	.section	.rodata.str1.4,"aMS",%progbits,1
-HELLO_WORLD:
+
+HELLO_WORLD: @ The string we wanna print
 	.ascii	"Hello world!\012\000"
